@@ -1,0 +1,247 @@
+/*** Theme pallete ***/
+:root {
+    .str-chat {
+        --str-chat__primary-color: linear-gradient(129deg, #0B99FF 5.57%, #0068B3 119.16%);
+        --str-chat__active-primary-color: linear-gradient(129deg, #0B99FF 5.57%, #0068B3 119.16%);
+        --str-chat__surface-color: #f5f5f5;
+        --str-chat__secondary-surface-color: #fafafa;
+        --str-chat__primary-surface-color: #000000;
+        --str-chat__primary-surface-color-low-emphasis: #edf7f7;
+        --str-chat__border-radius-circle: 6px;
+        --white-snow: linear-gradient(129deg, #0B99FF 5.57%, #0068B3 119.16%);
+    }
+}
+
+
+.str-chat__avatar-image--loaded {
+    flex-basis: 22px !important;
+    height: 22px !important;
+    object-fit: cover !important;
+    width: 22px !important;
+    border-radius: 50% !important;
+}
+
+
+.str-chat__channel-search-bar-button.str-chat__channel-search-bar-button--menu {
+    position: relative;
+}
+
+.app-menu {
+    &__container {
+        position: absolute;
+        top: 50px;
+        left: 10px;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 0 8px var(--str-chat__box-shadow-color);
+    }
+
+    &__item-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__item {
+        list-style: none;
+        margin: 0;
+        padding: 0.5rem 1rem;
+
+        &:hover {
+            background-color: lightgrey;
+            cursor: pointer;
+        }
+    }
+}
+
+.search {
+    margin-top: 5% !important;
+}
+
+.search-input {
+    width: 90%;
+    border: 0;
+    border-radius: 10px;
+    background: #00000014;
+    font: inherit;
+    padding: 10px 15px;
+    margin-left: 5% !important;
+}
+
+.search-input::-webkit-search-cancel-button {
+    appearance: none;
+}
+
+.search-actions {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0 20px;
+}
+
+.search-button {
+    background: #00000014;
+    border: 0;
+    border-bottom: 1px solid #dbdde1;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.search-button:first-child {
+    border-radius: 10px 10px 0 0;
+}
+
+.search-button:last-child {
+    border-radius: 0 0 10px 10px;
+    border-bottom: 0;
+}
+
+.search-button:hover {
+    background: #dbdde1;
+}
+
+.search-results {
+    list-style: none;
+    padding: 1rem;
+    margin: 0;
+    background: white;
+    border-radius: 5px;
+    width: 90%;
+    margin-left: 4%;
+}
+
+.search-results__item {
+    padding-left: 30px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.search-results__item:not(:last-child) {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dbdde1;
+}
+
+.search-results__icon {
+    display: inline-block;
+    width: 24px;
+    margin-left: -30px;
+    height: 24px;
+    flex-basis: 24px;
+    clip-path: circle();
+}
+
+.search-results__img-icon {
+    width: 100%;
+}
+
+
+
+/**** customsearch csss**/
+
+.search-result-item {
+    font: inherit;
+    border: 0;
+    background: none;
+    padding: 10px 20px 10px 50px;
+    text-align: left;
+}
+
+.search-result-item:not(:last-child) {
+    border-bottom: 1px solid #dbdde1;
+}
+
+.search-result-item_focused {
+    background: #dbdde1;
+}
+
+.search-result-item__icon {
+    display: inline-block;
+    width: 30px;
+    margin-left: -30px;
+}
+
+.search-results__iconWrapper {
+    margin-left: 12%;
+}
+
+.search-results__iconContainer {
+    width: 100%;
+}
+
+
+/** User Profile css **/
+.user__profile-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    margin-right: 10%;
+}
+
+.user__profile-wrapper {
+    background: var(--white-snow);
+    display: flex;
+    align-items: center;
+    margin: 0 5%;
+    border: 1px solid transparent !important;
+    border-radius: 5px;
+    margin-bottom: 5%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/** Custom Header css**/
+
+.header-title {
+    padding: 5px 7px;
+}
+
+.header-pound {
+    color: #006cff;
+    font-weight: 800;
+    padding-right: 2px;
+}
+
+.header-item__image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.header-item {
+    display: flex;
+    align-items: center;
+}
+
+.header-item__title-wrapper {
+    margin-left: 20px;
+}
+
+.header-item__channel-status {
+    margin: 0;
+    padding: 0;
+    font-size: small;
+
+}
+
+.header-item__channel-name {
+    margin-bottom: 6px;
+    margin-top: 0;
+}
+
+.header-item__channel-dot {
+    height: 10px;
+    width: 10px;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.header-item__user-statatus-wrapper{
+    display: flex;
+    align-items: center;
+justify-content: center;
+}
