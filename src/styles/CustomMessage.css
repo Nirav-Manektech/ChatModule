@@ -72,6 +72,18 @@
     appearance: none;
 }
 
+.search-input__wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.search-input__close-icon {
+    position: absolute;
+    left: 15rem !important;
+    z-index: 99999999;
+}
+
 .search-actions {
     display: flex;
     flex-direction: column;
@@ -103,10 +115,19 @@
     list-style: none;
     padding: 1rem;
     margin: 0;
-    background: white;
+    background-color: #f2f2f2 !important;
     border-radius: 5px;
     width: 90%;
     margin-left: 4%;
+    border-bottom: 1px solid #dbdde1;
+}
+
+.search-results__no-search-text {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 0.6px solid #e1d9d9;
+    height: 40px;
 }
 
 .search-results__item {
@@ -181,7 +202,7 @@
 }
 
 .user__profile-wrapper {
-    background: var(--white-snow);
+    background: white;
     display: flex;
     align-items: center;
     margin: 0 5%;
@@ -191,6 +212,12 @@
     padding: 10px;
     box-sizing: border-box;
 }
+
+.user__profile-name {
+    font-weight: 600;
+    font-size: 18px;
+}
+
 
 /** Custom Header css**/
 
@@ -230,6 +257,8 @@
 .header-item__channel-name {
     margin-bottom: 6px;
     margin-top: 0;
+    font-weight: 600;
+    font-size: 22px;
 }
 
 .header-item__channel-dot {
@@ -240,8 +269,40 @@
     margin-right: 10px;
 }
 
-.header-item__user-statatus-wrapper{
+.header-item__user-statatus-wrapper {
     display: flex;
     align-items: center;
-justify-content: center;
+    justify-content: center;
+}
+
+
+/** custom Css for sidebar **/
+
+.str-chat.messaging, .str-chat.commerce {
+    background-color: #f2f2f2 !important;
+}
+
+.str-chat__channel-list-messenger {
+    background-color: #f2f2f2 !important;
+}
+
+.str-chat__channel-preview-messenger--active {
+    background: white !important;
+}
+
+.str-chat__li--single .str-chat__message-text-inner {
+    background-color: var(--grey-whisper) !important;
+}
+
+.str-chat__message-text-inner, .str-chat__message-simple-text-inner {
+    background: var(--grey-whisper) !important;
+}
+
+.messaging.str-chat .str-chat__header-livestream {
+    background: #00000014 !important;
+}
+
+.str-chat__channel-preview-messenger {
+    background: #00000014;
+    border-radius: var(--border-radius-md);
 }

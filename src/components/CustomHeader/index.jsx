@@ -1,5 +1,5 @@
 import React from 'react'
-import { useChannelStateContext, useChatContext } from 'stream-chat-react';
+import { useChannelStateContext } from 'stream-chat-react';
 
 const CustomChannelHeader = (props) => {
     const { client } = props;
@@ -9,12 +9,10 @@ const CustomChannelHeader = (props) => {
     //TODO Add static logic for idenify receiver
     const memberList = channel.state.members;
     Object.entries(memberList).forEach(([key, val]) => {
-        // console.log(key,val ,client)
         if (val.user_id !== client.userID) {
             ChannelName = val
         }
     })
-    console.log("watchers", client, channel.state.members, ChannelName)
 
 
 
