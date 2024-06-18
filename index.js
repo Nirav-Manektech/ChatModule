@@ -1,5 +1,7 @@
 const StreamChat = require('stream-chat').StreamChat;
-const client = StreamChat.getInstance('wfduxrtvehe2','tk2knhwkzf5dwdwqv9kd8hdk3y6hdq9jfd2ydd8xsg8xgzbjuyj77yvgq39uq495');
+const ACCOUNT_ID = ''
+const ACCCOUNT_SECRET = ''
+const client = StreamChat.getInstance(ACCOUNT_ID,ACCOUNT_SECRET);
 
 
 
