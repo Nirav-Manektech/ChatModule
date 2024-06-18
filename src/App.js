@@ -35,10 +35,11 @@ const App = () => {
   const [isSearchQuery, setIsSearchQuery] = useState(false)
   const [editingMessage, setEditingMessage] = useState(null); // Track the message being edited
   const inputRef = useRef(null);
+  const STREAM_CHAT_ID = ''
 
   useEffect(() => {
     const initChat = async () => {
-      const client = StreamChat.getInstance("wfduxrtvehe2", { timeout: 6000 });
+      const client = StreamChat.getInstance(STREAM_CHAT_ID, { timeout: 6000 });
       await client.connectUser(
         {
           id: jwtDecode(token).user_id,
