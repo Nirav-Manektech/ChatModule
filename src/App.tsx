@@ -1,160 +1,188 @@
 import React, { useEffect, useState, useRef } from "react";
 import { StreamChat } from "stream-chat";
 import {
-    Chat,
-    Channel,
-    ChannelList,
-    LoadingIndicator,
-    MessageInput,
-    Thread,
-    Window,
-    useMessageContext,
-    useTranslationContext,
-    useDeleteHandler,
-    MessageList,
-    MessageInputProps,
+  Chat,
+  Channel,
+  ChannelList,
+  LoadingIndicator,
+  MessageInput,
+  Thread,
+  Window,
+  useMessageContext,
+  useTranslationContext,
+  useDeleteHandler,
+  MessageList,
+  MessageInputProps
 } from "stream-chat-react";
 import { JwtDecodeOptions, jwtDecode } from "jwt-decode";
 import "./styles/CustomMessage.css";
 import { BrowserRouter } from "react-router-dom";
 import CustomSearch from "./components/CustomSearch";
-import { EmojiPicker } from 'stream-chat-react/emojis';
-
+import { EmojiPicker } from "stream-chat-react/emojis";
+import { getToken } from "firebase/messaging";
+import { messaging } from "./firebase/firebaseConfig";
 
 import "stream-chat-react/dist/css/index.css";
 import CustomChannelHeader from "./components/CustomHeader";
 
 interface JWTDecode extends JwtDecodeOptions {
-    user_id: ''
+  user_id: "";
 }
 
 interface filtersType {
-    type: string;
-    members: { $in: any };
-    limit?: number;
+  type: string;
+  members: { $in: any };
+  limit?: number;
 }
-
-
 
 const sort = { last_message_at: -1 };
 
-const App:React.FC = ():React.JSX.Element => {
-    const token = localStorage.getItem("token");
-    const [filters, setFilters] = useState<filtersType>({ type: "messaging", members: { $in: [jwtDecode<JWTDecode>(token as string).user_id] } })
-    const [chatClient, setChatClient]: any = useState(null);
-    // const [isSearchQuery, setIsSearchQuery] = useState(false)
-    const [editingMessage, setEditingMessage] = useState(null); // Track the message being edited
+const App: React.FC = (): React.JSX.Element => {
+  const token = localStorage.getItem("token");
+  const [filters, setFilters] = useState<filtersType>({
+    type: "messaging",
+    members: { $in: [jwtDecode<JWTDecode>(token as string).user_id] }
+  });
+  const [chatClient, setChatClient]: any = useState(null);
+  // const [isSearchQuery, setIsSearchQuery] = useState(false)
+  const [editingMessage, setEditingMessage] = useState(null); // Track the message being edited
   const inputRef = useRef<HTMLInputElement | null>(null); // Define inputRef with HTMLInputElement type
 
-    useEffect(() => {
-        const initChat = async () => {
-            const client: any = StreamChat.getInstance("wfduxrtvehe2", { timeout: 6000 });
-            await client.connectUser(
-                {
-                    id: jwtDecode<JWTDecode>(token as string).user_id,
-                    name: jwtDecode<JWTDecode>(token as string).user_id,
-                    image:
-                        "https://getstream.io/random_png/?id=little-wood-9&name=little-wood-9"
-                },
-                token
-            );
-            setChatClient(client);
-        };
+  async function requestPermission() {
+    //requesting permission using Notification API
+    const permission = await Notification.requestPermission();
+    console.log("permission", permission);
+    if (permission === "granted") {
+      const token = await getToken(messaging, {
+        vapidKey:
+          "BHUHTpAMglMVDsxytQ2lO2AmIYcqHdhSFJ2U116dmH5ZhJcD6zLQOqLTccpKJkEpXEgYzaRcSYTZjRRJMdAdeSc"
+      });
 
-        initChat();
-    }, [token]);
-
-    // useEffect(() => {
-    //     if (isSearchQuery) {
-    //         setFilters({ type: "messaging", members: { $in: [jwtDecode<JWTDecode>(token as string).user_id] }, limit: 0 })
-    //     }
-
-    // }, [isSearchQuery, token])
-
-    if (!chatClient) {
-        return <LoadingIndicator />;
+      //We can send token to server
+      console.log("Token generated : ", token);
+    } else if (permission === "denied") {
+      //notifications are blocked
+      alert("You denied for the notification");
     }
+  }
 
+  useEffect(() => {
+    requestPermission();
+  }, []);
 
-    const handleEdit = (message: any) => {
-        if (inputRef.current) {
-            inputRef.current.focus();
-        }
-        setEditingMessage(message);
+  useEffect(() => {
+    const initChat = async () => {
+      const client: any = StreamChat.getInstance("wfduxrtvehe2", {
+        timeout: 6000
+      });
+      await client.connectUser(
+        {
+          id: jwtDecode<JWTDecode>(token as string).user_id,
+          name: jwtDecode<JWTDecode>(token as string).user_id,
+          image:
+            "https://getstream.io/random_png/?id=little-wood-9&name=little-wood-9"
+        },
+        token
+      );
+      setChatClient(client);
     };
 
+    initChat();
+  }, [token]);
 
+  // useEffect(() => {
+  //     if (isSearchQuery) {
+  //         setFilters({ type: "messaging", members: { $in: [jwtDecode<JWTDecode>(token as string).user_id] }, limit: 0 })
+  //     }
 
-    const CustomMessageActionList: React.FC = (): JSX.Element | null => {
-        const { message }: any = useMessageContext('CustomMessageActionList');
-        const { t } = useTranslationContext('CustomMessageActionList');
-        const deleteHandler: any = useDeleteHandler(message)
-        // const editHandler = useEditHandler(message)
-        if (message.user.id !== chatClient.user.id) {
-            return <></>
-        }
-        return (
-            <>
-                <button
-                    className='str-chat__message-actions-list-item str-chat__message-actions-list-item-button'
-                    onClick={(event) => {
-                        deleteHandler(event)
-                    }}
-                >
-                    <>
-                        {t('Delete')}
-                    </>
-                </button>
+  // }, [isSearchQuery, token])
 
-                <button
-                    className='str-chat__message-actions-list-item str-chat__message-actions-list-item-button'
-                    onClick={() => handleEdit(message)}
-                >
-                    <>
-                        {t('Edit')}
-                    </>
-                </button>
+  if (!chatClient) {
+    return <LoadingIndicator />;
+  }
 
-                {/** ...other action buttons... */}
-            </>
-        );
-    };
-
-
-    const getMessageActions = () => {
-        return ["flag", "mute", "pin", "react", "reply"];
-    };
-
-
-    const CustomSearchHOC: React.FC = (): React.JSX.Element => {
-        return <CustomSearch />
+  const handleEdit = (message: any) => {
+    if (inputRef.current) {
+      inputRef.current.focus();
     }
+    setEditingMessage(message);
+  };
 
-
-    const WrappedChannel = ({ children }:any) => {
-        return <Channel EmojiPicker={EmojiPicker} CustomMessageActionsList={CustomMessageActionList}>{children}</Channel>;
-    };
-
+  const CustomMessageActionList: React.FC = (): JSX.Element | null => {
+    const { message }: any = useMessageContext("CustomMessageActionList");
+    const { t } = useTranslationContext("CustomMessageActionList");
+    const deleteHandler: any = useDeleteHandler(message);
+    // const editHandler = useEditHandler(message)
+    if (message.user.id !== chatClient.user.id) {
+      return <></>;
+    }
     return (
-        <BrowserRouter>
-            <Chat client={chatClient}>
-                <Window>
-                    <ChannelList filters={filters as any} sort={sort as any} showChannelSearch ChannelSearch={CustomSearchHOC} />
-                </Window>
-                <WrappedChannel>
-                    <Window>
-                        <CustomChannelHeader client={chatClient as any} />
-                        <MessageList messageActions={getMessageActions()} />
-                        {/*  @ts-ignore:next-line  */}
-                        <MessageInput focus inputRef={inputRef }
-                            message={editingMessage as any}
-                            clearEditingState={() => setEditingMessage(null)} />
-                    </Window>
-                    <Thread />
-                </WrappedChannel>
-            </Chat>
-        </BrowserRouter>
+      <>
+        <button
+          className="str-chat__message-actions-list-item str-chat__message-actions-list-item-button"
+          onClick={(event) => {
+            deleteHandler(event);
+          }}>
+          <>{t("Delete")}</>
+        </button>
+
+        <button
+          className="str-chat__message-actions-list-item str-chat__message-actions-list-item-button"
+          onClick={() => handleEdit(message)}>
+          <>{t("Edit")}</>
+        </button>
+
+        {/** ...other action buttons... */}
+      </>
     );
+  };
+
+  const getMessageActions = () => {
+    return ["flag", "mute", "pin", "react", "reply"];
+  };
+
+  const CustomSearchHOC: React.FC = (): React.JSX.Element => {
+    return <CustomSearch />;
+  };
+
+  const WrappedChannel = ({ children }: any) => {
+    return (
+      <Channel
+        EmojiPicker={EmojiPicker}
+        CustomMessageActionsList={CustomMessageActionList}>
+        {children}
+      </Channel>
+    );
+  };
+
+  return (
+    <BrowserRouter>
+      <Chat client={chatClient}>
+        <Window>
+          <ChannelList
+            filters={filters as any}
+            sort={sort as any}
+            showChannelSearch
+            ChannelSearch={CustomSearchHOC}
+          />
+        </Window>
+        <WrappedChannel>
+          <Window>
+            <CustomChannelHeader client={chatClient as any} />
+            <MessageList messageActions={getMessageActions()} />
+            {/*  @ts-ignore:next-line  */}
+            <MessageInput
+              focus
+              //   inputRef={inputRef}
+              message={editingMessage as any}
+              clearEditingState={() => setEditingMessage(null)}
+            />
+          </Window>
+          <Thread />
+        </WrappedChannel>
+      </Chat>
+    </BrowserRouter>
+  );
 };
 
 export default App;
