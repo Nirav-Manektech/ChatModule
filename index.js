@@ -2,23 +2,40 @@ const StreamChat = require('stream-chat').StreamChat;
 const ACCOUNT_ID = ''
 const ACCCOUNT_SECRET = ''
 const client = StreamChat.getInstance(ACCOUNT_ID,ACCOUNT_SECRET);
+const firebase = require("firebase-admin");
+const serviceAccount = require("./firebase-demo.json")
+
+firebase.initializeApp({credential:firebase.credential.cert(serviceAccount)})
 
 
 
-
-
-const express = require('express')
+const express = require('express');
+const { title } = require('process');
 
 const app = express()
 
 app.use(express.json())
-app.get('/', async function (req, res) {
-    await client.connectUser({
-        id: "withered-thunder-0",
-        name: "withered",
-        image: "https://bit.ly/2u9Vc0r",
-    }, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoid2l0aGVyZWQtdGh1bmRlci0wIiwiZXhwIjoxNzE4MTk2NTM3fQ.ZduHjhlaY3imAnE6DqMr9x0qZ9uz0AitW5NudugZ0n8"); // token generated server side
-
+app.post('/', async function (req, res) {
+    // await client.connectUser({
+    //     id: "withered-thunder-0",
+    //     name: "withered",
+    //     image: "https://bit.ly/2u9Vc0r",
+    // }, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoid2l0aGVyZWQtdGh1bmRlci0wIiwiZXhwIjoxNzE4MTk2NTM3fQ.ZduHjhlaY3imAnE6DqMr9x0qZ9uz0AitW5NudugZ0n8"); // token generated server side
+    console.log("req", req.body);
+    console.log("sender", req.body.user)
+    const receiver = req?.body?.channel?.members?.filter((member) => member.user_id !== req.body.user.id)
+    console.log("receiver",receiver)
+    if (receiver?.[0]?.user?.book) {
+        let msg = {
+            token: receiver?.[0]?.user?.book,
+            notification: {
+                title: req.body.user.id,
+                body: req.body.message.text
+            }
+        }
+        const response = await firebase.messaging().send(msg)
+        console.log("Successfully sent message:", response);
+    }
     res.send('Hello World')
 })
 
@@ -26,7 +43,8 @@ app.post("/insertUser", async function (req, res) {
     const updateResponse = await client.upsertUser({
         id: req.body.userId,
         role: 'admin',
-        book: 'dune'
+        book: req.body.book,
+        deviceId: req.body.token
     })
     console.log("updateResponse", updateResponse)
     return res.status(200).json({ success: true, updateResponse })
@@ -100,6 +118,20 @@ app.post("/channelCreate", async function (req, res) {
 // await channel.sendMessage({
 //     text: "What is the medieval equivalent of tabs vs spaces?",
 // });
+
+app.get("/sendNotification", async (req, res) => {
+    console.log('req.params.token',req.query.token)
+    let msg = {
+        token: req.query.token,
+        notification: {
+            title: "Test Notification",
+            body: "This is a test notification",
+        }
+    }
+    const response = await firebase.messaging().send(msg)
+    console.log("Successfully sent message:", response);
+    return res.status(200).json({ success: true, response })
+})
 
 app.listen(5000, () => {
     console.log("listen on port",5000)
